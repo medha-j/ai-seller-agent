@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+  
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  stores        Store[]
+  auditLogs     AuditLog[]
+
+  @@index([email])
+}
+
+model Store {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  storeName     String
+  category      String
+  description   String?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  products      Product[]
+  salesLogs     SalesLog[]
+  recommendations Recommendation[]
+
+  @@unique([userId])
+  @@index([userId])
+}
+
+model Product {
+  id            String    @id @default(cuid())
+  storeId       String
+  store         Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  
+  name          String
+  sku           String
+  category      String
+  price         Float
+  costPrice     Float?
+  stock         Int       @default(0)
+  description   String?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  salesLogs     SalesLog[]
+
+  @@unique([storeId, sku])
+  @@index([storeId])
+}
+
+model SalesLog {
+  id            String    @id @default(cuid())
+  storeId       String
+  store         Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  
+  productId     String
+  product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  quantity      Int
+  pricePerUnit  Float
+  totalAmount   Float
+  
+  customerSegment String?
+  timestamp     DateTime  @default(now())
+  
+  @@index([storeId])
+  @@index([productId])
+  @@index([timestamp])
+}
+
+model Recommendation {
+  id            String    @id @default(cuid())
+  storeId       String
+  store         Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  
+  recommendationType String
+  title         String
+  description   String
+  reasoning     String
+  
+  status        String    @default("pending")
+  executedAt    DateTime?
+  
+  projectedRevenueLift Float?
+  actualRevenueLift    Float?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  auditLogs     AuditLog[]
+
+  @@index([storeId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  storeId       String?
+  recommendationId String?
+  recommendation Recommendation? @relation(fields: [recommendationId], references: [id], onDelete: Cascade)
+  
+  action        String
+  details       String
+  ipAddress     String?
+  userAgent     String?
+  
+  timestamp     DateTime  @default(now())
+
+  @@index([userId])
+  @@index([timestamp])
+  @@index([action])
+}
