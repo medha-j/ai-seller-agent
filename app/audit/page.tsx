@@ -47,6 +47,7 @@ export default function AuditPage() {
     if (action.includes("sales")) return "bg-green-600";
     if (action.includes("recommendation")) return "bg-purple-600";
     if (action.includes("agent")) return "bg-yellow-600";
+    if (action.includes("razorpay")) return "bg-orange-600";
     return "bg-gray-600";
   };
 
@@ -74,7 +75,7 @@ export default function AuditPage() {
           </thead>
           <tbody>
             {logs.map((log) => (
-              <tr key={log.id} className="border-b border-gray-700">
+              <tr key={log.id} className="border-b border-gray-700 hover:bg-gray-750">
                 <td className="p-4">
                   <span className={`${getActionColor(log.action)} px-3 py-1 rounded text-white text-sm`}>
                     {getActionLabel(log.action)}
