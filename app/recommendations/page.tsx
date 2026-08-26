@@ -17,7 +17,7 @@ interface Recommendation {
   reasoning: string;
   status: string;
   createdAt: string;
-  executeAt: string | null;
+  executedAt: string | null;
   projectedRevenueLift: number | null;
   actualRevenueLift: number | null;
 }
@@ -221,8 +221,8 @@ export default function RecommendationsPage() {
                 <h3 className="text-lg font-bold text-white">{rec.title}</h3>
                 <p className="text-gray-400 text-sm">
                   Executed on{" "}
-                  {rec.executeAt
-                    ? new Date(rec.executeAt).toLocaleDateString()
+                  {rec.executedAt
+                    ? new Date(rec.executedAt).toLocaleDateString()
                     : "N/A"}
                 </p>
               </div>
