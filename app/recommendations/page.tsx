@@ -17,7 +17,7 @@ interface Recommendation {
   reasoning: string;
   status: string;
   createdAt: string;
-  executeAt: string | null;
+  executedAt: string | null;
   projectedRevenueLift: number | null;
   actualRevenueLift: number | null;
 }
